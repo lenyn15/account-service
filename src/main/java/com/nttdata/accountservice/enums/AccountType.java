@@ -4,9 +4,9 @@ package com.nttdata.accountservice.enums;
  * @author Lenyn Smith Goicochea Arévalo
  */
 public enum AccountType {
-    SAVING( "Saving" ),
-    CURRENT_ACCOUNT( "Current Account" ),
-    FIXED_TERM( "Fixed Term" );
+    SAVING( "Ahorro" ),
+    CURRENT_ACCOUNT( "Corriente" ),
+    FIXED_TERM( "Plazo fijo" );
 
     public final String label;
 

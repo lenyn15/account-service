@@ -1,4 +1,4 @@
-package com.nttdata.accountservice.account;
+package com.nttdata.accountservice.lib.account;
 
 import com.nttdata.accountservice.enums.AccountType;
 import lombok.Getter;
@@ -28,7 +28,7 @@ public class Account implements Serializable {
      * Account's number
      */
     @Field( name = "NM_ACCOUNT" )
-    private Integer nmAccount;
+    private String nmAccount;
 
     /**
      * Account's available balance

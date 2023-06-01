@@ -1,8 +1,7 @@
-package com.nttdata.accountservice.account_transaction;
+package com.nttdata.accountservice.lib.account_transaction;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.nttdata.accountservice.account.AccountDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,7 +31,7 @@ public class AccountTransactionDTO {
     /**
      * Account where transaction is made
      */
-    private AccountDTO accountDTO;
+    private Integer nmAccount;
 
     /**
      * Type of transaction

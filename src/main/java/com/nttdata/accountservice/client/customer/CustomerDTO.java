@@ -1,4 +1,4 @@
-package com.nttdata.accountservice.client.model;
+package com.nttdata.accountservice.client.customer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -31,7 +31,7 @@ public class CustomerDTO implements Serializable {
     private Integer type;
 
     /**
-     * Type of customer description
+     * Customer's document number
      */
-    private String customerType;
+    private String nmDocument;
 }

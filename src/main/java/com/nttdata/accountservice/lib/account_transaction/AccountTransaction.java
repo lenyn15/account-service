@@ -1,6 +1,6 @@
-package com.nttdata.accountservice.account_transaction;
+package com.nttdata.accountservice.lib.account_transaction;
 
-import com.nttdata.accountservice.account.Account;
+import com.nttdata.accountservice.lib.account.Account;
 import com.nttdata.accountservice.enums.TransactionType;
 import lombok.Getter;
 import lombok.Setter;

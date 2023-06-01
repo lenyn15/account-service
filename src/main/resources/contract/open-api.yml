@@ -1,0 +1,162 @@
+openapi: '3.0.1'
+info:
+  title: Account Microservice
+  description: |-
+    This microservice provides the next operations like: Open an account when is a new customer, Open an account when the customer is
+    already registered, Check the balance of all accounts of the customer, Make transactions and Check all transactions made by the
+    customer.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8082/api/v1
+    description: Local server
+paths:
+  /account:
+    post:
+      tags:
+        - account
+      summary: Open an account when is a new customer
+      description: Open an account when is a new customer
+      operationId: openNewAccount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountDTO'
+              description: Object with required fields
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /account/{nmDocument}:
+    post:
+      tags:
+        - account
+      summary: Open an account to existing customer
+      description: Open an account to existing customer
+      operationId: openAccount
+      parameters:
+        - name: nmDocument
+          in: path
+          description: Customer's document number
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountDTO'
+              description: Object with required fields
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /account/{customerId}:
+    get:
+      tags:
+        - account
+      summary: Check all accounts of the customer
+      description: Check the balance of the accounts
+      operationId: checkBalance
+      parameters:
+        - name: customerId
+          in: path
+          description: Customer's identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '400':
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '404':
+          description: Accounts not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+components:
+  schemas:
+    Response:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        httpStatus:
+          type: string
+        data:
+          oneOf:
+            - type: string
+              enum:
+                - "Se creo correctamente la cuenta"
+                - "Se realizó correctamente la transacción"
+            - type: array
+              items:
+                oneOf:
+                  - $ref: '#/components/schemas/AccountDTO'
+        errors:
+          type: array
+          items:
+            type: string
+            enum:
+              - "Debe indicar el tipo de cuenta"
+              - "Debe elegir la cuenta a la que se hará la transacción"
+              - "Debe elegir el tipo de transacción"
+              - "Debe ingresar el monto para realizar la transacción"
+              - "No tiene cuentas asociadas"
+              - "Debe ingresar los datos del cliente"
+    AccountDTO:
+      required:
+        - type
+      type: object
+      properties:
+        idAccount:
+          type: string
+        nmAccount:
+          type: string
+        availableBalance:
+          type: number
+        nmCommission:
+          type: number
+        movementLimit:
+          type: integer
+        type:
+          type: integer
+        accountType:
+          type: string
+        customerDTO:
+          type: object
+          $ref: '#/components/schemas/CustomerDTO'
+    CustomerDTO:
+      required:
+        - dsName
+        - type
+        - nmDocument
+      type: object
+      properties:
+        idCustomer:
+          type: string
+        dsName:
+          type: string
+        type:
+          type: integer
+        nmDocument:
+          type: string

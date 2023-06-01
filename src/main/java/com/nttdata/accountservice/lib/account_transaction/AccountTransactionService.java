@@ -1,4 +1,4 @@
-package com.nttdata.accountservice.account_transaction;
+package com.nttdata.accountservice.lib.account_transaction;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

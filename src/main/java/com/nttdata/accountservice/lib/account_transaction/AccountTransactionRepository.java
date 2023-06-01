@@ -1,4 +1,4 @@
-package com.nttdata.accountservice.account_transaction;
+package com.nttdata.accountservice.lib.account_transaction;
 
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;

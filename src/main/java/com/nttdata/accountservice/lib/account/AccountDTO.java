@@ -1,7 +1,8 @@
-package com.nttdata.accountservice.account;
+package com.nttdata.accountservice.lib.account;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.nttdata.accountservice.client.customer.CustomerDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,7 +26,7 @@ public class AccountDTO implements Serializable {
     /**
      * Account's number
      */
-    private Integer nmAccount;
+    private String nmAccount;
 
     /**
      * Account's available balance
@@ -54,7 +55,7 @@ public class AccountDTO implements Serializable {
     private String accountType;
 
     /**
-     * Customer's identifier
+     * Customer for the account
      */
-    private String idCustomer;
+    private CustomerDTO customerDTO;
 }
