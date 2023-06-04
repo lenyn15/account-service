@@ -1,6 +1,5 @@
 package com.nttdata.accountservice.lib.account_transaction;
 
-import com.nttdata.accountservice.lib.account.Account;
 import com.nttdata.accountservice.enums.TransactionType;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,10 +25,16 @@ public class AccountTransaction {
     private String idAccountTransaction;
 
     /**
-     * Account where transaction is made
+     * Customer's identifier
      */
-    @Field( name = "ACCOUNT" )
-    private Account account;
+    @Field( "CUSTOMER_ID" )
+    private String customerId;
+
+    /**
+     * Account's number where transaction is made
+     */
+    @Field( name = "NM_ACCOUNT" )
+    private String nmAccount;
 
     /**
      * Type of transaction

@@ -31,6 +31,11 @@ public class CustomerDTO implements Serializable {
     private Integer type;
 
     /**
+     * Type of customer description
+     */
+    private String customerType;
+
+    /**
      * Customer's document number
      */
     private String nmDocument;

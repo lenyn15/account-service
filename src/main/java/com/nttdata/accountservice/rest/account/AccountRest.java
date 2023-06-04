@@ -66,7 +66,6 @@ public class AccountRest {
             responses = {
                     @ApiResponse( responseCode = "200", description = "Successful operation", content = @Content( mediaType = "application/json", schema = @Schema( implementation = Response.class ) ) ),
                     @ApiResponse( responseCode = "400", description = "Invalid ID supplied", content = @Content( mediaType = "application/json", schema = @Schema( implementation = Response.class ) ) ),
-                    @ApiResponse( responseCode = "404", description = "Accounts not found", content = @Content( mediaType = "application/json", schema = @Schema( implementation = Response.class ) ) )
             } )
     @GetMapping( "{customerId}" )
     public Mono<ResponseEntity<Response>> checkBalance(

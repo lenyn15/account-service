@@ -1,6 +1,7 @@
 package com.nttdata.accountservice.util;
 
 import com.nttdata.accountservice.enums.AccountType;
+import com.nttdata.accountservice.enums.TransactionType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +56,14 @@ public final class Util {
         types.put( Constants.AccountType.SAVING, AccountType.SAVING );
         types.put( Constants.AccountType.CURRENT_ACCOUNT, AccountType.CURRENT_ACCOUNT );
         types.put( Constants.AccountType.FIXED_TERM, AccountType.FIXED_TERM );
+
+        return types;
+    }
+
+    public static Map<Integer, TransactionType> getTransactionTypes() {
+        Map<Integer, TransactionType> types = new HashMap<>();
+        types.put( Constants.TransactionType.WITHDRAWAL, TransactionType.WITHDRAWAL );
+        types.put( Constants.TransactionType.DEPOSIT, TransactionType.DEPOSIT );
 
         return types;
     }

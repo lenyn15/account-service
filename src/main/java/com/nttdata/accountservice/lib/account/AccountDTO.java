@@ -58,4 +58,14 @@ public class AccountDTO implements Serializable {
      * Customer for the account
      */
     private CustomerDTO customerDTO;
+
+    /**
+     * Number of holders of the account
+     */
+    private Integer nmHolders;
+
+    /**
+     * Number of signatory of the account
+     */
+    private Integer nmSignatories;
 }

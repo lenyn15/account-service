@@ -29,9 +29,14 @@ public class AccountTransactionDTO {
     private String idAccount;
 
     /**
-     * Account where transaction is made
+     * Customer's identifier
      */
-    private Integer nmAccount;
+    private String customerId;
+
+    /**
+     * Account's number where transaction is made
+     */
+    private String nmAccount;
 
     /**
      * Type of transaction

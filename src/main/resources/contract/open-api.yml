@@ -86,8 +86,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Response'
-        '404':
-          description: Accounts not found
+  /account-transaction:
+    post:
+      tags:
+        - account-transaction
+      summary: Allow to make a transaction like deposit or withdraw
+      description: Verify if exist the account to make the transaction
+      operationId: makeTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountTransactionDTO'
+              description: Object with required fields
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+  /account-transaction/{customerId}:
+    get:
+      tags:
+        - account-transaction
+      summary: Get all transactions made by the customer
+      description: Return a list of all transactions made
+      operationId: checkTransactions
+      parameters:
+        - name: customerId
+          in: path
+          description: Customer's identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '400':
+          description: Invalid ID supplied
           content:
             application/json:
               schema:
@@ -112,6 +154,7 @@ components:
               items:
                 oneOf:
                   - $ref: '#/components/schemas/AccountDTO'
+                  - $ref: '#/components/schemas/AccountTransactionDTO'
         errors:
           type: array
           items:
@@ -121,8 +164,11 @@ components:
               - "Debe elegir la cuenta a la que se hará la transacción"
               - "Debe elegir el tipo de transacción"
               - "Debe ingresar el monto para realizar la transacción"
-              - "No tiene cuentas asociadas"
               - "Debe ingresar los datos del cliente"
+              - "El tipo de transacción solo puede ser 1 o 2"
+              - "Ya alcanzó el limite de movimientos mensuales"
+              - "No hay saldo disponible"
+              - "No se encontró la cuenta"
     AccountDTO:
       required:
         - type
@@ -145,6 +191,24 @@ components:
         customerDTO:
           type: object
           $ref: '#/components/schemas/CustomerDTO'
+    AccountTransactionDTO:
+      type: object
+      properties:
+        idAccountTransaction:
+          type: string
+        idAccount:
+          type: string
+        nmAccount:
+          type: string
+        type:
+          type: integer
+        transactionType:
+          type: string
+        nmAmount:
+          type: number
+        fcTransaction:
+          type: string
+          format: date-time
     CustomerDTO:
       required:
         - dsName
@@ -158,5 +222,7 @@ components:
           type: string
         type:
           type: integer
+        customerType:
+          type: string
         nmDocument:
           type: string

@@ -59,4 +59,16 @@ public class Account implements Serializable {
      */
     @Field( name = "CUSTOMER_ID" )
     private String customerId;
+
+    /**
+     * Number of holders of the account
+     */
+    @Field( name = "NM_HOLDERS" )
+    private Integer nmHolders;
+
+    /**
+     * Number of signatory of the account
+     */
+    @Field( name = "NM_SIGNATORIES" )
+    private Integer nmSignatories;
 }

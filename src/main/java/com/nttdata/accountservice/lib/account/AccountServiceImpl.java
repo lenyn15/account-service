@@ -1,6 +1,7 @@
 package com.nttdata.accountservice.lib.account;
 
 import com.nttdata.accountservice.client.customer.CustomerClient;
+import com.nttdata.accountservice.client.customer.CustomerDTO;
 import com.nttdata.accountservice.enums.AccountType;
 import com.nttdata.accountservice.exception.RequestException;
 import com.nttdata.accountservice.mapper.AccountToDTO;
@@ -45,11 +46,24 @@ public class AccountServiceImpl implements AccountService {
                 throw new RequestException( "Debe ingresar los datos del cliente" );
             }
 
+            if ( accountDTO.getType() < 1 || accountDTO.getType() > 3 ) {
+                throw new RequestException( "El tipo de cuenta permitido está entre 1 y 3" );
+            }
+
             return this.customerClient.addNewCustomer( Mono.just( accountDTO.getCustomerDTO() ) )
                     .flatMap( response -> {
                         Map<?, ?> data = Objects.requireNonNull( response.getBody() ).getData();
                         Account account = AccountToEntity.INSTANCE.apply( accountDTO );
                         account.setCustomerId( ( String ) data.get( Constants.Key.INFO ) );
+
+                        AccountType accountType = Util.getAccountTypes().get( accountDTO.getType() );
+                        String customerType = accountDTO.getCustomerDTO().getCustomerType();
+                        if ( Constants.CustomerType.BUSINESS.equals( customerType ) ) {
+                            this.validateAccountOfBusinessCustomer( accountType, accountDTO.getNmHolders() );
+                            account.setNmHolders( accountDTO.getNmHolders() );
+                            account.setNmSignatories( Objects.requireNonNullElse( accountDTO.getNmSignatories(), 0 ) );
+                        }
+
                         return this.accountRepository.save( account ).then();
                     } );
         } );
@@ -64,8 +78,11 @@ public class AccountServiceImpl implements AccountService {
                 .map( response -> {
                     Map<?, ?> data = Objects.requireNonNull( response.getBody() ).getData();
                     LinkedHashMap<?, ?> infoData = ( LinkedHashMap<?, ?> ) data.get( Constants.Key.INFO );
-                    return infoData.get( "idCustomer" ).toString();
-                } ).flatMap( idCustomer -> requestDTO.flatMap( accountDTO -> {
+                    return CustomerDTO.builder()
+                            .idCustomer( infoData.get( "idCustomer" ).toString() )
+                            .customerType( infoData.get( "customerType" ).toString() )
+                            .build();
+                } ).flatMap( customerDTO -> requestDTO.flatMap( accountDTO -> {
                     accountDTO.setNmAccount( Util.generateNumAccount() );
                     accountDTO.setAvailableBalance( BigDecimal.ZERO );
 
@@ -73,19 +90,27 @@ public class AccountServiceImpl implements AccountService {
                         throw new RequestException( "El tipo de cuenta permitido está entre 1 y 3" );
                     }
 
-                    AccountType accountType = Util.getAccountTypes().get( accountDTO.getType() );
-                    return this.accountRepository.findByCustomerIdAndAccountType( idCustomer, accountType )
-                            .hasElement()
-                            .flatMap( existAccount -> {
-                                if ( Boolean.TRUE.equals( existAccount ) ) {
-                                    String dsAccountType = accountType.label;
-                                    throw new RequestException( "El cliente ya tiene una cuenta " + dsAccountType );
-                                }
+                    Account account = AccountToEntity.INSTANCE.apply( accountDTO );
+                    account.setCustomerId( customerDTO.getIdCustomer() );
 
-                                Account account = AccountToEntity.INSTANCE.apply( accountDTO );
-                                account.setCustomerId( idCustomer );
-                                return this.accountRepository.save( account ).then();
-                            } );
+                    AccountType accountType = Util.getAccountTypes().get( accountDTO.getType() );
+                    if ( Constants.CustomerType.PERSONAL.equals( customerDTO.getCustomerType() ) ) {
+                        return this.accountRepository.findByCustomerIdAndAccountType( customerDTO.getIdCustomer(), accountType )
+                                .hasElement()
+                                .flatMap( existAccount -> {
+                                    if ( Boolean.TRUE.equals( existAccount ) ) {
+                                        String dsAccountType = accountType.label;
+                                        throw new RequestException( "El cliente ya tiene una cuenta " + dsAccountType );
+                                    }
+
+                                    return this.accountRepository.save( account ).then();
+                                } );
+                    }
+
+                    this.validateAccountOfBusinessCustomer( accountType, accountDTO.getNmHolders() );
+                    account.setNmHolders( accountDTO.getNmHolders() );
+                    account.setNmSignatories( Objects.requireNonNullElse( accountDTO.getNmSignatories(), 0 ) );
+                    return this.accountRepository.save( account ).then();
                 } ) );
     }
 
@@ -98,5 +123,15 @@ public class AccountServiceImpl implements AccountService {
                 .map( AccountToDTO.INSTANCE )
                 .collectList()
                 .flux();
+    }
+
+    private void validateAccountOfBusinessCustomer( AccountType accountType, Integer nmHolders ) {
+        if ( !AccountType.CURRENT_ACCOUNT.equals( accountType ) ) {
+            throw new RequestException( "El cliente empresarial solo puede abrir cuenta corriente" );
+        }
+
+        if ( Objects.isNull( nmHolders ) || nmHolders < 1 ) {
+            throw new RequestException( "Debe ingresar el numero de titulares de la cuenta y debe ser como minimo 1" );
+        }
     }
 }
